@@ -18,7 +18,6 @@ export default function PatientForm() {
   const debounceRef = useRef(null);
   const pendingRef = useRef({});
 
-  // Establish (or resume) this patient's session on mount.
   useEffect(() => {
     const id = getOrCreatePatientId();
     setPatientId(id);
@@ -69,22 +68,20 @@ export default function PatientForm() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!isLastStep) {
-      goNext();
-      return;
-    }
+    if (e) e.preventDefault();
+    if (!isLastStep) return;
+
     setSubmitAttempted(true);
     const allErrors = validateAll(data);
     setErrors(allErrors);
     if (Object.keys(allErrors).length > 0) {
-      // Jump back to the first step that has a problem.
       const badGroupIndex = FIELD_GROUPS.findIndex((g) =>
         g.fields.some((f) => allErrors[f.name])
       );
       if (badGroupIndex !== -1) setStep(badGroupIndex);
       return;
     }
+    
     flushUpdate();
     socket.emit("patient:submit", { id: patientId, data });
     setSubmitted(true);
@@ -143,7 +140,7 @@ export default function PatientForm() {
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={(e) => e.preventDefault()} noValidate>
         <h2 className="mb-5 font-display text-xl font-medium text-ink">{group.title}</h2>
 
         <div className="space-y-5">
@@ -171,7 +168,8 @@ export default function PatientForm() {
 
           {isLastStep ? (
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className="rounded-lg bg-ink px-6 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-ink-light"
             >
               Submit
