@@ -84,10 +84,16 @@ export default function PatientForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Guard: some mobile keyboards fire a native form "submit" directly
+    // from the "Go"/"Next" key (bypassing our onKeyDown handler entirely).
+    // If we're not actually on the last step yet, treat that as "go to
+    // the next step" instead of submitting the whole form.
     if (!isLastStep) {
-    goNext();
-    return;
-  }
+      goNext();
+      return;
+    }
+
     setSubmitAttempted(true);
     const allErrors = validateAll(data);
     setErrors(allErrors);
