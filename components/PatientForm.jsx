@@ -84,6 +84,10 @@ export default function PatientForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isLastStep) {
+    goNext();
+    return;
+  }
     setSubmitAttempted(true);
     const allErrors = validateAll(data);
     setErrors(allErrors);
