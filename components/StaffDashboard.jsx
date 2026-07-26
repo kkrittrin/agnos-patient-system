@@ -47,7 +47,7 @@ export default function StaffDashboard() {
         return name.includes(q) || p.id.toLowerCase().includes(q);
       });
     }
-    // Active first, then filling, then inactive; newest activity first within each.
+
     const rank = { filling: 0, submitted: 1, inactive: 2 };
     return arr.sort((a, b) => {
       const r = (rank[a.status] ?? 3) - (rank[b.status] ?? 3);

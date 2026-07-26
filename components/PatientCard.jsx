@@ -6,8 +6,6 @@ import { timeAgo } from "../lib/time";
 export default function PatientCard({ record }) {
   const [, forceTick] = useState(0);
 
-  // Re-render every few seconds purely so the "x seconds ago" label
-  // stays fresh without needing a fresh socket event.
   useEffect(() => {
     const t = setInterval(() => forceTick((n) => n + 1), 4000);
     return () => clearInterval(t);
