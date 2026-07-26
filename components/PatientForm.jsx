@@ -47,10 +47,6 @@ export default function PatientForm() {
 
   useEffect(() => () => clearTimeout(debounceRef.current), []);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step]);
-
   const group = FIELD_GROUPS[step];
   const isLastStep = step === FIELD_GROUPS.length - 1;
   const stepComplete = isGroupComplete(group.key, data);
@@ -72,28 +68,12 @@ export default function PatientForm() {
     setStep((s) => Math.max(s - 1, 0));
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key !== "Enter" || e.target.tagName === "TEXTAREA") return;
-    e.preventDefault();
-    if (isLastStep) {
-      handleSubmit(e);
-    } else {
-      goNext();
-    }
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Guard: some mobile keyboards fire a native form "submit" directly
-    // from the "Go"/"Next" key (bypassing our onKeyDown handler entirely).
-    // If we're not actually on the last step yet, treat that as "go to
-    // the next step" instead of submitting the whole form.
     if (!isLastStep) {
       goNext();
       return;
     }
-
     setSubmitAttempted(true);
     const allErrors = validateAll(data);
     setErrors(allErrors);
@@ -163,7 +143,7 @@ export default function PatientForm() {
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate>
+      <form onSubmit={handleSubmit} noValidate>
         <h2 className="mb-5 font-display text-xl font-medium text-ink">{group.title}</h2>
 
         <div className="space-y-5">
