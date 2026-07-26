@@ -47,6 +47,10 @@ export default function PatientForm() {
 
   useEffect(() => () => clearTimeout(debounceRef.current), []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   const group = FIELD_GROUPS[step];
   const isLastStep = step === FIELD_GROUPS.length - 1;
   const stepComplete = isGroupComplete(group.key, data);
@@ -66,6 +70,16 @@ export default function PatientForm() {
   const goBack = () => {
     flushUpdate();
     setStep((s) => Math.max(s - 1, 0));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key !== "Enter" || e.target.tagName === "TEXTAREA") return;
+    e.preventDefault();
+    if (isLastStep) {
+      handleSubmit(e);
+    } else {
+      goNext();
+    }
   };
 
   const handleSubmit = (e) => {
@@ -139,7 +153,7 @@ export default function PatientForm() {
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate>
         <h2 className="mb-5 font-display text-xl font-medium text-ink">{group.title}</h2>
 
         <div className="space-y-5">
